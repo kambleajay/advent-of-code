@@ -1,9 +1,13 @@
 (ns aoc.day2
   (:require [clojure.java.io :as io]))
 
+(defn count-freq [ch acc next-ch]
+  (if (= (str next-ch) ch)
+    (inc acc)
+    acc))
+
 (defn valid-password? [{:keys [min-occurrence max-occurrence ch password]}]
-  (let [count-freq (fn [acc next-ch] (if (= (str next-ch) ch) (inc acc) acc))
-        ch-freq (reduce count-freq 0 password)]
+  (let [ch-freq (reduce (partial count-freq ch) 0 password)]
     (and (>= ch-freq min-occurrence) (<= ch-freq max-occurrence))))
 
 (defn parse-policy-and-password [s]
@@ -14,9 +18,12 @@
      :ch             ch
      :password       password}))
 
+(defn nth-char [s index]
+  (str (nth s (dec index))))
+
 (defn valid-password-alt? [{:keys [index-1 index-2 ch password]}]
-  (let [index-1-ch (str (nth password (dec index-1)))
-        index-2-ch (str (nth password (dec index-2)))]
+  (let [index-1-ch (nth-char password index-1)
+        index-2-ch (nth-char password index-2)]
     (or (and (= index-1-ch ch) (not= index-2-ch ch))
         (and (not= index-1-ch ch) (= index-2-ch ch)))))
 
