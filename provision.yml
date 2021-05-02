@@ -1,0 +1,23 @@
+---
+- hosts: all
+  become: yes
+
+  pre_tasks:
+    - name: update apt cache if needed
+      apt: update_cache=true cache_valid_time=3600
+      become: yes
+
+  tasks:
+    - name: install deps
+      apt:
+        state: present
+        name:
+          - rlwrap
+          - default-jdk
+
+    - name: install clojure
+      shell: |
+        cd /tmp
+        curl -O https://download.clojure.org/install/linux-install-1.10.3.822.sh
+        chmod +x linux-install-1.10.3.822.sh
+        sudo ./linux-install-1.10.3.822.sh
